@@ -1,0 +1,20 @@
+[
+  {
+    "twitch": "metashi12",
+    "twitch_url": "https://www.twitch.tv/metashi12",
+    "charname": "thrall",
+    "realm": "durotan",
+    "manual_level": 60,
+    "auto_level": null,
+    "status": "offline"
+  },
+  {
+    "twitch": "noway4u_sir",
+    "twitch_url": "https://www.twitch.tv/noway4u_sir",
+    "charname": "noway",
+    "realm": "durotan",
+    "manual_level": 55,
+    "auto_level": null,
+    "status": "online"
+  }
+]

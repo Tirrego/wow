@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WoW Hardcore Leaderboard</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #000;
+        color: #f0f0f0;
+        padding: 2rem;
+        max-width: 600px;
+        margin: auto;
+      }
+
+      header {
+        background-color: black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 450px;
+      }
+
+      header img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .card {
+        background-color: #2a2a2a;
+        border: 1px solid #444;
+        border-radius: 8px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      }
+
+      .rank {
+        font-size: 1.4rem;
+        font-weight: bold;
+        width: 2rem;
+        color: #fca311;
+        user-select: none;
+      }
+
+      a.name {
+        font-size: 1.3rem;
+        font-weight: bold;
+        text-decoration: none;
+        color: #ccc;
+        flex-grow: 1;
+      }
+
+      a.name.online {
+        color: #00ff88;
+      }
+
+      a.name.offline {
+        color: #ff4444;
+      }
+
+      .info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        user-select: none;
+        min-width: 160px;
+      }
+
+      .info-row {
+        display: flex;
+        align-items: center;
+      }
+
+      .info-label {
+        width: 90px;
+        color: #aaa;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+
+      .info-value {
+        color: #fff;
+        font-size: 1.1rem;
+      }
+
+      .info-value.manual {
+        font-style: italic;
+        color: #fca311;
+      }
+
+      .info-value.auto {
+        color: #87cefa;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="./logo2.png" alt="WoW Hardcore Leaderboard Logo" />
+    </header>
+
+    <div id="leaderboard"></div>
+
+    <script>
+      async function loadPlayers() {
+        const res = await fetch("/api/players");
+        const players = await res.json();
+
+        // Nach Level absteigend sortieren
+        players.sort((a, b) => {
+          const levelA = a.manual_level ?? a.auto_level ?? 0;
+          const levelB = b.manual_level ?? b.auto_level ?? 0;
+          return levelB - levelA;
+        });
+
+        const container = document.getElementById("leaderboard");
+        container.innerHTML = "";
+
+        players.forEach((p, index) => {
+          const level = p.manual_level ?? p.auto_level ?? "?";
+          const levelClass = p.manual_level != null ? "manual" : "auto";
+          const isOnline = p.status === "online";
+          const nameClass = isOnline ? "name online" : "name offline";
+
+          container.innerHTML += `
+            <div class="card">
+              <div class="rank">#${index + 1}</div>
+              <a class="${nameClass}" href="${p.twitch_url}" target="_blank" rel="noopener noreferrer">${p.twitch}</a>
+              <div class="info">
+                <div class="info-row">
+                  <div class="info-label">Charakter:</div>
+                  <div class="info-value">${p.charname}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Level:</div>
+                  <div class="info-value ${levelClass}">${level}</div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      loadPlayers();
+    </script>
+  </body>
+</html>
